@@ -124,12 +124,15 @@ public class PyOperatorFactory
                 mapper.writeValue(fo, ImmutableMap.of("params", params));
             }
 
-            List<String> cmdline = ImmutableList.<String>builder()
-                .add("python").add("-")  // script is fed from stdin
-                .addAll(args)
-                .build();
+            List<String> python = params.getListOrEmpty("python", String.class);
+            if (python.isEmpty()) {
+                python = ImmutableList.<String>builder()
+                            .add("python").add("-")  // script is fed from stdin
+                            .addAll(args)
+                            .build();
+            }
 
-            ProcessBuilder pb = new ProcessBuilder(cmdline);
+            ProcessBuilder pb = new ProcessBuilder(python);
             pb.directory(workspace.getPath().toFile());
             pb.redirectErrorStream(true);
 
